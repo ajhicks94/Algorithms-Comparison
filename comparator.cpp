@@ -12,6 +12,7 @@
 
 using std::cout;
 using std::endl;
+using std::ios;
 using std::istringstream;
 using std::vector;
 using std::string;
@@ -21,6 +22,7 @@ using std::getline;
 using std::min;
 
 void dijkstra(int src, int dist[], const vector<vector<int> >& m, int n);
+void output_dijkstra(const vector<vector<int> >& d, int n, int counter);
 
 int main(int argc, char* argv[]){
 
@@ -29,59 +31,83 @@ int main(int argc, char* argv[]){
         return 0;
     }
 
+    // Remove any previous output file
+    remove("alg_output.txt");
+
     // Open the input file
     ifstream input;
     input.open(argv[1]);
 
     if(input.is_open()){
-        int n;
-        char fchar;
+        int counter = 1;
         string firstLine;
 
-        // Get the first line
-        getline(input, firstLine);
+        // Parse the file
+        while(getline(input, firstLine)){
 
-        // Confirm that we have the line above the matrix
-        if(firstLine[0] == 'n'){
-            cout << "Correctly identified first line" << endl;
+            int n;
+            char fchar;
 
-            // Parse number of nodes from the first line
-            istringstream iss (firstLine);
-            iss >> fchar >> fchar >> n;
+            // Confirm that we have the line above the matrix
+            if(firstLine[0] == 'n'){
+
+                // Parse number of nodes from the first line
+                istringstream iss (firstLine);
+                iss >> fchar >> fchar >> n;
             
-            // Create vector of vectors with size n x n
-            vector<vector<int> > m (n, vector<int>(n));
+                // Create vector of vectors with size n x n
+                vector<vector<int> > m (n, vector<int>(n));
 
-            /*input >> m[0][0];
-            cout << "m[0][0]= " << m[0][0] << '\n';
-            input >> m[0][1];
-            cout << "m[0][1]= " << m[0][1] << '\n';
-*/
-            for(int i = 0; i < n; i++){
-                for(int j = 0; j < n; j++){
-                    input >> m[i][j];
+                for(int i = 0; i < n; i++){
+                    for(int j = 0; j < n; j++){
+                        input >> m[i][j];
+                    }
                 }
-            }
+                
+                // New vector for output of Dijkstra's Algorithm
+                vector<vector<int> > d (m);
 
-            int dist[n];
-            dijkstra(2, dist, m, n);
-            for(int i = 0; i < n; i++){
-                cout << "dist[0][" << i << "]= " << dist[i] << '\n';
-            }
-            // Run dijsktra's n times
-            // Run Floyd-Warshall's
+                // Run Dijkstra's Algorithm n times
+                for(int i = 0; i < n; i++){
+                    int dist[n];
 
-            /*for(int i = 0; i < n; i++){
-                for(int j = 0; j < n; j++){
-                    cout << m[i][j] << " ";
+                    dijkstra(i, dist, m, n);
+
+                    for(int j = 0; j < n; j++){
+                        d[i][j] = dist[j];
+                    }
                 }
-                cout << '\n';
-            }*/
+                
+                // Output the cost matrix to file
+                output_dijkstra(d, n, counter);
+
+                // Run Floyd-Warshall's
+                counter++;
+            }
         }
     }
     else cout << "There was a problem opening the input file: " << argv[1] << endl;
 
     return 0;
+}
+void output_dijkstra(const vector<vector<int> >& d, int n, int counter){
+
+    ofstream alg_output;
+    alg_output.open("alg_output.txt", ios::app);
+
+    alg_output << "Graph #" << counter << '\n';
+    alg_output << "Dijkstra's:\n";
+
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < n; j++){
+            alg_output << d[i][j] << " ";
+        }
+        alg_output << '\n';
+    }
+
+    alg_output << '\n';
+
+    alg_output.close();
 }
 
 void dijkstra(int src, int dist[], const vector<vector<int> >& m, int n){
