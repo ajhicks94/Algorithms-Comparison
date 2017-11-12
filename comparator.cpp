@@ -9,6 +9,7 @@
 #include <sstream>
 #include <vector>
 #include <ctime>
+#include <climits>
 
 using std::cout;
 using std::endl;
@@ -130,7 +131,7 @@ void setup_summary(){
 }
 
 
-void output_fw(const vector<vector<int> >& m, int n){
+void output_fw(const vector<vector<int> >& m, int n, double time_elapsed){
     ofstream alg_output;
     alg_output.open("alg_output.txt", ios::app);
 
@@ -162,7 +163,7 @@ void floyd_warshall(vector<vector<int> >& m, int n, clock_t &fw_begin, clock_t &
     fw_end = clock();
 }
 
-void output_dijkstra(const vector<vector<int> >& d, int n, int counter){
+void output_dijkstra(const vector<vector<int> >& d, int n, int counter, double time_elapsed){
 
     ofstream alg_output;
     alg_output.open("alg_output.txt", ios::app);
