@@ -8,7 +8,6 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
-#include <algorithm>
 
 using std::cout;
 using std::endl;
@@ -19,7 +18,6 @@ using std::string;
 using std::ifstream;
 using std::ofstream;
 using std::getline;
-using std::min;
 
 void dijkstra(int src, int dist[], const vector<vector<int> >& m, int n);
 void output_dijkstra(const vector<vector<int> >& d, int n, int counter);
