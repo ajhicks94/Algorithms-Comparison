@@ -24,6 +24,9 @@ using std::min;
 void dijkstra(int src, int dist[], const vector<vector<int> >& m, int n);
 void output_dijkstra(const vector<vector<int> >& d, int n, int counter);
 
+void floyd_warshall(vector<vector<int> >& m, int n);
+void output_fw(const vector<vector<int> >& m, int n);
+
 int main(int argc, char* argv[]){
 
     if(argc != 2){
@@ -81,21 +84,60 @@ int main(int argc, char* argv[]){
                 // Output the cost matrix to file
                 output_dijkstra(d, n, counter);
 
-                // Run Floyd-Warshall's
+                // Run Floyd-Warshall's Algorithm on cost matrix
+                floyd_warshall(m, n);
+
+                // Output results to file
+                output_fw(m, n);
+
+                // Increment counter
                 counter++;
             }
         }
+        input.close();
     }
     else cout << "There was a problem opening the input file: " << argv[1] << endl;
 
     return 0;
 }
+
+void output_fw(const vector<vector<int> >& m, int n){
+    ofstream alg_output;
+    alg_output.open("alg_output.txt", ios::app);
+
+    alg_output << "Floyd-Warshall:\n";
+
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < n; j++){
+            alg_output << m[i][j] << " ";
+        }
+        alg_output << '\n';
+    }
+
+    alg_output << '\n';
+
+    alg_output.close();
+}
+
+void floyd_warshall(vector<vector<int> >& m, int n){
+    
+    for(int k = 0; k < n; k++){
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < n; j++){
+                if(m[i][j] > m[i][k] + m[k][j]){
+                    m[i][j] = (m[i][k] + m[k][j]);
+                }
+            }
+        }
+    }
+}
+
 void output_dijkstra(const vector<vector<int> >& d, int n, int counter){
 
     ofstream alg_output;
     alg_output.open("alg_output.txt", ios::app);
 
-    alg_output << "Graph #" << counter << '\n';
+    alg_output << "\tGraph #" << counter << '\n';
     alg_output << "Dijkstra's:\n";
 
     for(int i = 0; i < n; i++){
