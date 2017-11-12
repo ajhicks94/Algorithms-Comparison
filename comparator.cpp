@@ -8,6 +8,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <ctime>
 
 using std::cout;
 using std::endl;
@@ -19,11 +20,12 @@ using std::ifstream;
 using std::ofstream;
 using std::getline;
 
+void setup_summary();
 void dijkstra(int src, int dist[], const vector<vector<int> >& m, int n);
-void output_dijkstra(const vector<vector<int> >& d, int n, int counter);
+void output_dijkstra(const vector<vector<int> >& d, int n, int counter, double time_elapsed);
 
-void floyd_warshall(vector<vector<int> >& m, int n);
-void output_fw(const vector<vector<int> >& m, int n);
+void floyd_warshall(vector<vector<int> >& m, int n, clock_t &fw_begin, clock_t &fw_end);
+void output_fw(const vector<vector<int> >& m, int n, double time_elapsed);
 
 int main(int argc, char* argv[]){
 
@@ -34,12 +36,16 @@ int main(int argc, char* argv[]){
 
     // Remove any previous output file
     remove("alg_output.txt");
+    remove("summary.txt");
 
     // Open the input file
     ifstream input;
     input.open(argv[1]);
 
     if(input.is_open()){
+
+        setup_summary();
+
         int counter = 1;
         string firstLine;
 
@@ -48,6 +54,12 @@ int main(int argc, char* argv[]){
 
             int n;
             char fchar;
+            clock_t d_begin;
+            clock_t d_end;
+            clock_t fw_begin;
+            clock_t fw_end;
+            double d_elapsed;
+            double fw_elapsed;
 
             // Confirm that we have the line above the matrix
             if(firstLine[0] == 'n'){
@@ -69,6 +81,7 @@ int main(int argc, char* argv[]){
                 vector<vector<int> > d (m);
 
                 // Run Dijkstra's Algorithm n times
+                d_begin = clock();
                 for(int i = 0; i < n; i++){
                     int dist[n];
 
@@ -78,26 +91,44 @@ int main(int argc, char* argv[]){
                         d[i][j] = dist[j];
                     }
                 }
-                
+                d_end = clock();
+                d_elapsed = double(d_end - d_begin) / CLOCKS_PER_SEC;
+
                 // Output the cost matrix to file
-                output_dijkstra(d, n, counter);
+                output_dijkstra(d, n, counter, d_elapsed);
 
                 // Run Floyd-Warshall's Algorithm on cost matrix
-                floyd_warshall(m, n);
+                floyd_warshall(m, n, fw_begin, fw_end);
+
+                fw_elapsed = double(fw_end - fw_begin) / CLOCKS_PER_SEC;
 
                 // Output results to file
-                output_fw(m, n);
+                output_fw(m, n, fw_elapsed);
 
                 // Increment counter
                 counter++;
             }
         }
+
+        // Close input stream
         input.close();
     }
     else cout << "There was a problem opening the input file: " << argv[1] << endl;
 
     return 0;
 }
+
+void setup_summary(){
+    ofstream summary;
+    summary.open("summary.txt", ios::app);
+
+    summary << "-----------------------------------" << endl;
+    summary << "|  n  | Dijkstra | Floyd-Warshall |" << endl;
+    summary << "-----------------------------------" << endl;
+
+    summary.close();
+}
+
 
 void output_fw(const vector<vector<int> >& m, int n){
     ofstream alg_output;
@@ -117,8 +148,8 @@ void output_fw(const vector<vector<int> >& m, int n){
     alg_output.close();
 }
 
-void floyd_warshall(vector<vector<int> >& m, int n){
-    
+void floyd_warshall(vector<vector<int> >& m, int n, clock_t &fw_begin, clock_t &fw_end){
+    fw_begin = clock();
     for(int k = 0; k < n; k++){
         for(int i = 0; i < n; i++){
             for(int j = 0; j < n; j++){
@@ -128,6 +159,7 @@ void floyd_warshall(vector<vector<int> >& m, int n){
             }
         }
     }
+    fw_end = clock();
 }
 
 void output_dijkstra(const vector<vector<int> >& d, int n, int counter){
