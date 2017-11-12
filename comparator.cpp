@@ -5,6 +5,7 @@
  * Descr : 
  */
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <sstream>
 #include <vector>
@@ -13,6 +14,8 @@
 
 using std::cout;
 using std::endl;
+using std::setw;
+using std::fixed;
 using std::ios;
 using std::istringstream;
 using std::vector;
@@ -22,6 +25,8 @@ using std::ofstream;
 using std::getline;
 
 void setup_summary();
+void finish_summary();
+
 void dijkstra(int src, int dist[], const vector<vector<int> >& m, int n);
 void output_dijkstra(const vector<vector<int> >& d, int n, int counter, double time_elapsed);
 
@@ -111,6 +116,8 @@ int main(int argc, char* argv[]){
             }
         }
 
+        finish_summary();
+
         // Close input stream
         input.close();
     }
@@ -123,14 +130,21 @@ void setup_summary(){
     ofstream summary;
     summary.open("summary.txt", ios::app);
 
-    summary << "-----------------------------------" << endl;
-    summary << "|  n  | Dijkstra | Floyd-Warshall |" << endl;
-    summary << "-----------------------------------" << endl;
+    summary << "-------------------------------------" << endl;
+    summary << "| " << setw(4) << "n" << " | " << setw(9) << "Dijkstra" << " | " << setw(14) << "Floyd-Warshall" << " |" << endl;
+    summary << "-------------------------------------" << endl;
 
     summary.close();
 }
 
+void finish_summary(){
+    ofstream summary;
+    summary.open("summary.txt", ios::app);
 
+    summary << "-------------------------------------" << endl;
+
+    summary.close();
+}
 void output_fw(const vector<vector<int> >& m, int n, double time_elapsed){
     ofstream alg_output;
     alg_output.open("alg_output.txt", ios::app);
@@ -147,6 +161,13 @@ void output_fw(const vector<vector<int> >& m, int n, double time_elapsed){
     alg_output << '\n';
 
     alg_output.close();
+
+    ofstream summary;
+    summary.open("summary.txt", ios::app);
+
+    summary << "| " << fixed << setw(14) << time_elapsed << " |" << endl;
+
+    summary.close();
 }
 
 void floyd_warshall(vector<vector<int> >& m, int n, clock_t &fw_begin, clock_t &fw_end){
@@ -181,6 +202,13 @@ void output_dijkstra(const vector<vector<int> >& d, int n, int counter, double t
     alg_output << '\n';
 
     alg_output.close();
+
+    ofstream summary;
+    summary.open("summary.txt", ios::app);
+
+    summary << "| " << setw(4) << n << " | " << fixed << setw(9) << time_elapsed << " ";
+
+    summary.close();
 }
 
 void dijkstra(int src, int dist[], const vector<vector<int> >& m, int n){
