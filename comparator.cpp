@@ -25,7 +25,7 @@ int main(int argc, char* argv[]){
     input.open(argv[1]);
 
     if(input.is_open()){
-
+        
     }
     else cout << "There was a problem opening the input file: " << argv[1] << endl;
 

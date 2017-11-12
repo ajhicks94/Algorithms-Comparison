@@ -70,8 +70,9 @@ void writeMatrix(int n, const vector<vector<int> >& m){
     ofstream output;
     output.open("matrices.txt", ios::app);
 
-    // Write cost matrix to file, using ; on it's own line as a delimiter between matrices
+    // Write cost matrix to file, using the number of nodes as a delimiter between matrices
     if(output.is_open()){
+        output << "n = " << n << '\n';
         for(int i = 0; i < n; i++){
             for(int j = 0; j < n; j++){
                 if(j == (n - 1)){
@@ -83,7 +84,6 @@ void writeMatrix(int n, const vector<vector<int> >& m){
             }
             output << '\n';
         }
-        output << ";\n";
         output.close();
     }
     else cout << "There was a problem opening the output file: \"matrices.txt\"\n";
