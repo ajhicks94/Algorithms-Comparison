@@ -8,6 +8,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <algorithm>
 
 using std::cout;
 using std::endl;
@@ -17,8 +18,9 @@ using std::string;
 using std::ifstream;
 using std::ofstream;
 using std::getline;
+using std::min;
 
-
+void dijkstra(int src, int dist[], const vector<vector<int> >& m, int n);
 
 int main(int argc, char* argv[]){
 
@@ -61,6 +63,11 @@ int main(int argc, char* argv[]){
                 }
             }
 
+            int dist[n];
+            dijkstra(2, dist, m, n);
+            for(int i = 0; i < n; i++){
+                cout << "dist[0][" << i << "]= " << dist[i] << '\n';
+            }
             // Run dijsktra's n times
             // Run Floyd-Warshall's
 
@@ -76,3 +83,46 @@ int main(int argc, char* argv[]){
 
     return 0;
 }
+
+void dijkstra(int src, int dist[], const vector<vector<int> >& m, int n){
+    
+    // Set of visited nodes
+    bool visited[n];
+
+    for(int i = 0; i < n; i++){
+
+        // Initialize all nodes to unvisited
+        visited[i] = false;
+
+        // Initial distance from source to each node is taken from cost matrix
+        dist[i] = m[src][i];
+    }
+
+    // Mark source as visited
+    visited[src] = true;
+
+    // Distance from source to itself is 0
+    dist[src] = 0;
+
+    for(int i = 0; i < (n - 1); i++){
+        int u = n / 2; 
+
+        // Choose a vertex u that is unvisited whose distance from src is minimum
+        for(int j = 0; j < n; j++){
+            if(visited[j] == false){
+                u = ((dist[u] < dist[j]) ? u : j);
+            }
+        }
+
+        // Mark u as visited
+        visited[u] = true;
+
+        // For each neighbor j of u that has not been visited, updated distances
+        for(int j = 0; j < n; j++){
+            if((visited[j] == false) && (dist[j] > dist[u] + m[u][j])){
+                dist[j] = dist[u] + m[u][j];
+            }
+        }
+    }
+}
+
