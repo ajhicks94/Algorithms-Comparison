@@ -135,7 +135,7 @@ void output_dijkstra(const vector<vector<int> >& d, int n, int counter){
     ofstream alg_output;
     alg_output.open("alg_output.txt", ios::app);
 
-    alg_output << "\tGraph #" << counter << '\n';
+    alg_output << "\tGraph #" << counter << ", n = " << n << '\n';
     alg_output << "Dijkstra's:\n";
 
     for(int i = 0; i < n; i++){
@@ -170,13 +170,15 @@ void dijkstra(int src, int dist[], const vector<vector<int> >& m, int n){
     // Distance from source to itself is 0
     dist[src] = 0;
 
-    for(int i = 0; i < (n - 1); i++){
-        int u = n / 2; 
+    for(int i = 0; i < n; i++){
+        int u;
+        int min = INT_MAX;
 
         // Choose a vertex u that is unvisited whose distance from src is minimum
         for(int j = 0; j < n; j++){
-            if(visited[j] == false){
-                u = ((dist[u] < dist[j]) ? u : j);
+            if(visited[j] == false && dist[j] < min){
+                u = j;
+                min = dist[j];
             }
         }
 
