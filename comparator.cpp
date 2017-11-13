@@ -27,7 +27,7 @@ using std::getline;
 void setup_summary();
 void finish_summary();
 
-void dijkstra(int src, int dist[], const vector<vector<int> >& m, int n);
+void dijkstra(int src, int dist[], const vector<vector<int> >& m, int n, clock_t &d_elapsed);
 void output_dijkstra(const vector<vector<int> >& d, int n, int counter, double time_elapsed);
 
 void floyd_warshall(vector<vector<int> >& m, int n, clock_t &fw_begin, clock_t &fw_end);
@@ -60,12 +60,12 @@ int main(int argc, char* argv[]){
 
             int n;
             char fchar;
-            clock_t d_begin;
-            clock_t d_end;
+            clock_t d_sum = 0;
+            clock_t d_elapsed = 0;
             clock_t fw_begin;
             clock_t fw_end;
-            double d_elapsed;
             double fw_elapsed;
+            double d_converted;
 
             // Confirm that we have the line above the matrix
             if(firstLine[0] == 'n'){
@@ -87,21 +87,23 @@ int main(int argc, char* argv[]){
                 vector<vector<int> > d (m);
 
                 // Run Dijkstra's Algorithm n times
-                d_begin = clock();
+                //d_begin = clock();
                 for(int i = 0; i < n; i++){
                     int dist[n];
 
-                    dijkstra(i, dist, m, n);
+                    dijkstra(i, dist, m, n, d_elapsed);
+
+                    d_sum += d_elapsed;
 
                     for(int j = 0; j < n; j++){
                         d[i][j] = dist[j];
                     }
                 }
-                d_end = clock();
-                d_elapsed = double(d_end - d_begin) / CLOCKS_PER_SEC;
+                //d_end = clock();
+                d_converted = double(d_sum) / CLOCKS_PER_SEC;
 
                 // Output the cost matrix to file
-                output_dijkstra(d, n, counter, d_elapsed);
+                output_dijkstra(d, n, counter, d_converted);
 
                 // Run Floyd-Warshall's Algorithm on cost matrix
                 floyd_warshall(m, n, fw_begin, fw_end);
@@ -211,8 +213,10 @@ void output_dijkstra(const vector<vector<int> >& d, int n, int counter, double t
     summary.close();
 }
 
-void dijkstra(int src, int dist[], const vector<vector<int> >& m, int n){
-    
+void dijkstra(int src, int dist[], const vector<vector<int> >& m, int n, clock_t &d_elapsed){
+    clock_t d_end;
+    clock_t d_begin = clock();
+
     // Set of visited nodes
     bool visited[n];
 
@@ -253,5 +257,8 @@ void dijkstra(int src, int dist[], const vector<vector<int> >& m, int n){
             }
         }
     }
+    d_end = clock();
+    d_elapsed = d_end - d_begin;
+    //d_elapsed = double(d_end - d_begin) / CLOCKS_PER_SEC;
 }
 
