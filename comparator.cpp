@@ -2,7 +2,7 @@
  * Class : CSCE 4110 - Algorithms
  * Prof  : Dr. Shahrokhi
  * Assgn : Term Project - Algorithm Comparison
- * Descr : 
+ * Descr : Program that takes a file of cost matrices as input and runs Dijkstra's and Floyd-Warshall's algorithm on them, outputting the resulting cost matrices to a file as well as outputting the CPU time taken for each graph to another file
  */
 #include <iostream>
 #include <iomanip>
@@ -60,12 +60,12 @@ int main(int argc, char* argv[]){
 
             int n;
             char fchar;
-            clock_t d_sum = 0;
-            clock_t d_elapsed = 0;
+            clock_t d_sum;
+            clock_t d_elapsed;
             clock_t fw_begin;
             clock_t fw_end;
-            double fw_elapsed;
-            double d_converted;
+            double fw_elapsed = 0.0;
+            double d_converted = 0.0;
 
             // Confirm that we have the line above the matrix
             if(firstLine[0] == 'n'){
@@ -93,7 +93,12 @@ int main(int argc, char* argv[]){
 
                     dijkstra(i, dist, m, n, d_elapsed);
 
-                    d_sum += d_elapsed;
+                    if(i == 0){
+                        d_sum = d_elapsed;
+                    }
+                    else{
+                        d_sum += d_elapsed;
+                    }
 
                     for(int j = 0; j < n; j++){
                         d[i][j] = dist[j];
