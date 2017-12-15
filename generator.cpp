@@ -10,17 +10,61 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <sstream>
+#include <string>
 
 using std::vector;
+using std::string;
 using std::ofstream;
+using std::istringstream;
 using std::ios;
 using std::cout;
+using std::endl;
 
-void populateMatrix(int n, vector<vector<int> >& m);
+void printUsage(char* argv[]){
+    cout << "Usage: " << argv[0] << " <num_of_matrices> <max_num_of_nodes> <max_weight_of_edges>" << endl;
+}
+
+void printError(string msg, char* argv[]){
+    cout << "Error: " << msg << endl;
+    printUsage(argv);
+}
+
+int getParameters(int parms[], int argc, char* argv[]) {
+    
+    if(argc != 4){
+        printError("Incorrect number of parameters", argv);
+        return 0;
+    }
+
+    for(int i = 0; i < argc - 1; i++){
+        istringstream ss(argv[i+1]);
+
+        if(!(ss >> parms[i])){
+            string e = "Invalid parameter: ";
+            e += argv[i+1];
+            printError(e, argv);
+            return 0;
+        }
+    }
+
+    return 1;
+};
+void populateMatrix(int n, vector<vector<int> >& m, int max_weight_of_edges);
 void writeMatrix(int n, const vector<vector<int> >& m);
 
-int main(){
+int main(int argc, char* argv[]){
     
+    int parms[argc-1];
+
+    if(!getParameters(parms, argc, argv)){
+        return -1;
+    }
+
+    unsigned int num_of_matrices = parms[0];
+    unsigned int max_num_of_nodes = parms[1];
+    unsigned int max_weight_of_edges = parms[2];
+
     // Remove any previous file
     remove("matrices.txt");
 
@@ -29,17 +73,17 @@ int main(){
 
     cout << "Generating matrices...";
 
-    // Generate 30 cost matrices
-    for(int i = 0; i < 30; i++){
+    // Generate cost matrices
+    for(int i = 0; i < num_of_matrices; i++){
 
         // Random number of nodes from 50-1000
-        int n = rand() % 951 + 50;
+        int n = rand() % (max_num_of_nodes - 49) + 50;
 
         // Create a vector of vectors with size n x n
         vector<vector<int> > m (n, vector<int>(n));
     
         // Assign the edge values
-        populateMatrix(n, m);
+        populateMatrix(n, m, max_weight_of_edges);
 
         // Send the cost matrix to the output file
         writeMatrix(n, m);
@@ -51,7 +95,7 @@ int main(){
     return 0;
 }
 
-void populateMatrix(int n, vector<vector<int> >& m){
+void populateMatrix(int n, vector<vector<int> >& m, int max_weight_of_edges){
     // Populate edge values (1-100)
     for(int i = 0; i < n; i++){
         for(int j = 0; j < n; j++){
@@ -59,7 +103,7 @@ void populateMatrix(int n, vector<vector<int> >& m){
                 m[i][j] = 0;
             }
             else{
-               m[i][j] = rand() % 100 + 1; 
+               m[i][j] = rand() % max_weight_of_edges + 1; 
             }
         }
     }
