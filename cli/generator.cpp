@@ -2,7 +2,6 @@
 
 int main(int argc, char* argv[])
 {
-
     int parms[argc-1];
 
     if(!Generator::getParameters(parms, argc, argv)){
