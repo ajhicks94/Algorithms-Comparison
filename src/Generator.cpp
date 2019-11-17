@@ -55,17 +55,7 @@ int Generator::getParameters(int parms[], int argc, char* argv[]) {
 
 void Generator::generate_matrices(uint num_matrices_, uint max_nodes_, uint max_edge_weight_)
 {
-    /*int parms[argc-1];
-
-    if(!getParameters(parms, argc, argv)){
-        return -1;
-    }
-
-    unsigned int num_of_matrices = parms[0];
-    unsigned int max_num_of_nodes = parms[1];
-    unsigned int max_weight_of_edges = parms[2];
-
-    */
+    
     // Remove any previous file
     remove("matrices.txt");
 
