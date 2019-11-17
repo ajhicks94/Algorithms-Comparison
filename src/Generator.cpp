@@ -53,21 +53,23 @@ int Generator::getParameters(int parms[], int argc, char* argv[]) {
     return 1;
 };
 
-void Generator::generate_matrices(uint num_matrices_, uint max_nodes_, uint max_edge_weight_)
+void Generator::generate_matrices(unsigned int num_matrices_,
+                                  int max_nodes_,
+                                  uint max_edge_weight_)
 {
-    
     // Remove any previous file
     remove("matrices.txt");
 
     // Seed our random number generator
     srand(time(0));
 
-    cout << "Generating matrices...";
+    cout << "Generating matrices..." << std::flush;
 
     // Generate cost matrices
     for(int i = 0; i < num_matrices_; i++){
 
         // Random number of nodes from 50-1000
+        // TODO: fix the fact that max_nodes_ has to be signed
         int n = rand() % (max_nodes_ - 49) + 50;
 
         // Create a vector of vectors with size n x n
