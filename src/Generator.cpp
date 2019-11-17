@@ -13,6 +13,8 @@
 #include <sstream>
 #include <string>
 
+#include <Algorithms-Comparison/Generator.hpp>
+
 using std::vector;
 using std::string;
 using std::ofstream;
@@ -21,16 +23,16 @@ using std::ios;
 using std::cout;
 using std::endl;
 
-void printUsage(char* argv[]){
-    cout << "Usage: " << argv[0] << " <num_of_matrices> <max_num_of_nodes> <max_weight_of_edges>" << endl;
+void Generator::printUsage(char* argv[]){
+    cout << "Usage: " << argv[0] << " <num_matrices_> <max_num_of_nodes> <max_weight_of_edges>" << endl;
 }
 
-void printError(string msg, char* argv[]){
+void Generator::printError(string msg, char* argv[]){
     cout << "Error: " << msg << endl;
     printUsage(argv);
 }
 
-int getParameters(int parms[], int argc, char* argv[]) {
+int Generator::getParameters(int parms[], int argc, char* argv[]) {
     
     if(argc != 4){
         printError("Incorrect number of parameters", argv);
@@ -50,12 +52,10 @@ int getParameters(int parms[], int argc, char* argv[]) {
 
     return 1;
 };
-void populateMatrix(int n, vector<vector<int> >& m, int max_weight_of_edges);
-void writeMatrix(int n, const vector<vector<int> >& m);
 
-int main(int argc, char* argv[]){
-    
-    int parms[argc-1];
+void Generator::generate_matrices(uint num_matrices_, uint max_nodes_, uint max_edge_weight_)
+{
+    /*int parms[argc-1];
 
     if(!getParameters(parms, argc, argv)){
         return -1;
@@ -65,6 +65,7 @@ int main(int argc, char* argv[]){
     unsigned int max_num_of_nodes = parms[1];
     unsigned int max_weight_of_edges = parms[2];
 
+    */
     // Remove any previous file
     remove("matrices.txt");
 
@@ -74,28 +75,25 @@ int main(int argc, char* argv[]){
     cout << "Generating matrices...";
 
     // Generate cost matrices
-    for(int i = 0; i < num_of_matrices; i++){
+    for(int i = 0; i < num_matrices_; i++){
 
         // Random number of nodes from 50-1000
-        int n = rand() % (max_num_of_nodes - 49) + 50;
+        int n = rand() % (max_nodes_ - 49) + 50;
 
         // Create a vector of vectors with size n x n
         vector<vector<int> > m (n, vector<int>(n));
     
         // Assign the edge values
-        populateMatrix(n, m, max_weight_of_edges);
+        populateMatrix(n, m, max_edge_weight_);
 
         // Send the cost matrix to the output file
         writeMatrix(n, m);
-
         }
 
     cout << "complete!\nOutput in matrices.txt\n";
-
-    return 0;
 }
 
-void populateMatrix(int n, vector<vector<int> >& m, int max_weight_of_edges){
+void Generator::populateMatrix(int n, vector<vector<int> >& m, int max_weight_of_edges){
     // Populate edge values (1-100)
     for(int i = 0; i < n; i++){
         for(int j = 0; j < n; j++){
@@ -109,7 +107,7 @@ void populateMatrix(int n, vector<vector<int> >& m, int max_weight_of_edges){
     }
 }
 
-void writeMatrix(int n, const vector<vector<int> >& m){
+void Generator::writeMatrix(int n, const vector<vector<int> >& m){
     // Open output file in append mode
     ofstream output;
     output.open("matrices.txt", ios::app);
